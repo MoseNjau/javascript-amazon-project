@@ -7,15 +7,16 @@ cart.forEach((cartItem) => {
   const productId = cartItem.productId;
 
   let matchingProduct;
+
   products.forEach((product) => {
     if (product.id === productId) {
       matchingProduct = product;
     }
-  })
+  });
 
   
   cartSummaryHTML += `
-    <div class="cart-item-container js-cart-item-container-${matchingProduct.id}">
+    <div class="cart-item-container js-cart-item-container-${matchingProduct?.id}">
       <div class="delivery-date">
         Delivery date: Wednesday, June 15
       </div>
@@ -132,12 +133,26 @@ document.querySelectorAll('.js-delete-link')
     .forEach((link) => {
       link.addEventListener('click', () => {
         const productId = link.dataset.productId;
+
+        const quantityInput = document.querySelector(`.js-quantity-input-${productId}`);
+        const newQuantity = Number(quantityInput.value);
+
+        if (newQuantity < 0 || newQuantity > 1000) {
+          alert('Quantity cannot be less than 0 or greater than 1000');
+          return;
+        }
+
+        updateQuantity(productId, newQuantity);
+
+
         const container = document.querySelector(`.js-cart-item-container-${productId}`);
         container.classList.remove('is-editing-quantity');
-        const newQuantity = Number(document.querySelector(`.js-quantity-input-${productId}`).value);
-        updateQuantity(productId, newQuantity);
 
         const quantityLabel = document.querySelector(`.js-quantity-label-${productId}`);
         quantityLabel.innerHTML = newQuantity;
+
+        updateCartQuantity();
       });
     });
+
+
